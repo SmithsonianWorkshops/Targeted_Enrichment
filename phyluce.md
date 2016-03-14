@@ -257,7 +257,7 @@ Now we want to run ```lastz``` to match contigs to the UCE probe set and to remo
         ```  
 * The directory ```uce-search-results``` is created with the results.
     * *If you need to resubmit this command, delete this directory first or you'll receive an error message in your log file.*
-* Look at the log file to see how many unique and duplicate matches and how many loci were removed for each taxon.
+* Look at the log file, ```phyluce_assembly_match_contigs_to_probes.log```, to see how many unique and duplicate matches and how many loci were removed for each taxon.
 * Here is an example output:
 
 ```
