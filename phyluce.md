@@ -120,7 +120,7 @@ These data are raw, so we need to trim adapters and low quality reads before ass
 
 * You will first need to copy a configuration file called `illumiprocessor.conf` from `/pool/genomics/tutorial_data` to your `uce-tutorial` directory.
 	+ hint: use ```cp```.
-	+ Make sure you've changed from the ```uce-tutorial``` directory to ```raw-fastq``` with the command ```cd ..``` before copying the file.
+	+ Make sure you've changed to the ```uce-tutorial``` directory from ```raw-fastq``` with the command ```cd ..``` before copying the file.
 
 
 * **JOB FILE #2:** illumiprocessor  
@@ -141,9 +141,15 @@ These data are raw, so we need to trim adapters and low quality reads before ass
 * Check the log file and ```clean-fastq``` for results. Your cleaned files will be in ```clean-fastq/split-adapter-quality-trimmed```
 
 ###4. Assemble the data
-We will use Trinity to assemble the data into contigs. There will be a separate Trinity run for each sample in your dataset. This is the most time consuming computer intensive portion of the pipeline.
+We will use Trinity to assemble the data into contigs. There will be a separate Trinity run for each sample in your dataset. This is the most time consuming computer intensive portion of the pipeline. For today's tutorial, we will not have time to complete the assemblies.  
 
-* You need a configuration file to run Trinity within phyluce. Create a file called ```assembly.conf``` in ```uce-tutorial```.
+* Copy the directory with completed assemblies: ```pool/genomics/tutorial_data/trinity-assemblies``` to your ```uce-tutorial``` directory.  
+* hint: use ```cp -r```.  
+* Find the contigs!
+* Skip to the next section (#5). If you have extra time now, feel free to make the Trinity job file but wait to submit it until later.
+
+* Running the Trinity assembly (TO TRY AT A LATER DATE):  
+    + You need a configuration file to run Trinity within phyluce. Create a file called ```assembly.conf``` in ```uce-tutorial```.
     + hint: change directory to ```uce-tutorial``` and use ```nano``` to create the file  
     + The file has one line for each sample starting with the sample ID and then the full path to the directory containing the cleaned reads.
     + contents of the new assembly.conf file (hint: you will need to change YOUR-PATH to your directory):  
@@ -166,9 +172,6 @@ We will use Trinity to assemble the data into contigs. There will be a separate 
         --output trinity-assemblies \
         --cores $NSLOTS
         ```
-
-* Check the log file and the newly created directory ```trinity-assemblies/``` to see results.  
-* Find your contigs!  
 
 ###5. Assembly QC
 Let's check to see how well the assemblies worked.
