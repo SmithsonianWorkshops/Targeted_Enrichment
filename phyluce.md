@@ -124,6 +124,8 @@ These data are raw, so we need to trim adapters and low quality reads before ass
 	+ hint: use ```cp```.
 	+ Make sure you've changed to the ```uce-tutorial``` directory from ```raw-fastq``` with the command ```cd ..``` before copying the file.
 
+* Note that in most of the steps below there is an ```--output``` argument which is the name of an output file or directory that is created by the command. When you are working on your own analyses with real data consider the naming so that the contents will be well described.
+
 * **JOB FILE #2:** illumiprocessor  
     + hint: your raw reads are in ```raw-fastq``` but you want to run illumiprocessor from ```uce-tutorial```
     + **PE:** multi-thread 2 
@@ -243,8 +245,6 @@ Now we want to run ```lastz``` to match contigs to the UCE probe set and to remo
 
 * Before we locate UCE loci (in other words, match your contigs to the UCE probes), you need to get the probe set used for the enrichments:   
 	+ copy ```uce-5k-probes.fasta``` from ```/pool/genomics/tutorial_data``` to your ```uce-tutorial``` directory 
-
-* Note that in many of the steps that follow there is an ```--output``` argument which is the name of an output file or directory that is created by the command. When you are working on your own analyses with real data consider the naming so that the contents will be well described.
 
 * **JOB FILE #5:** Match contigs to probes:
     + **PE:** mthread 2  
