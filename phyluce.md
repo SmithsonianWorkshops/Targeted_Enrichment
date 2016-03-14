@@ -162,7 +162,7 @@ Here is a sample job file:
 	echo + `date` job $JOB_NAME started in $QUEUE with jobID=$JOB_ID on $HOSTNAME
 	echo + NSLOTS = $NSLOTS
 	#
-	illumiprocessor --input raw-fastq \  
+	illumiprocessor --input raw-fastq \
 	--output clean-fastq \
 	--config illumiprocessor.conf \
 	--paired \
@@ -171,16 +171,19 @@ Here is a sample job file:
 	echo = `date` job $JOB_NAME done
 ```
 
+* Submit and check the log file and ```clean-fastq``` for results. Your cleaned files will be in ```clean-fastq/split-adapter-quality-trimmed```
+* *Note: this job will take about 10 minutes to run. You can use this time to read ahead and check the ```clean-fastq``` directory,* 
+* **Troubleshooting:** With some Phyluce steps if you need to restart a command you will get an error that the output directory already exists. You will see a line like this in your log file: ```[WARNING] Output directory exists, REMOVE [Y/n]? Traceback (most recent call last):...```
+    * Remove the offending directory and re-submit with `qsub`.
 
-* Check the log file and ```clean-fastq``` for results. Your cleaned files will be in ```clean-fastq/split-adapter-quality-trimmed```
 
 ###4. Assemble the data
 We will use Trinity to assemble the data into contigs. There will be a separate Trinity run for each sample in your dataset. This is the most time consuming computer intensive portion of the pipeline. For today's tutorial, we will not have time to complete the assemblies.  
 
-* Copy the directory with completed assemblies: ```pool/genomics/tutorial_data/trinity-assemblies``` to your ```uce-tutorial``` directory.  
+* Copy the directory with completed assemblies: ```/pool/genomics/tutorial_data/trinity-assemblies``` to your ```uce-tutorial``` directory.  
 * hint: use ```cp -r```.  
 * Find the contigs!
-* Skip to the next section (#5). If you have extra time now, feel free to make the Trinity job file but wait to submit it until later.
+* **Skip to the next section (#5).** If you have extra time now, feel free to make the Trinity job file but wait to submit it until later.
 
 * Running the Trinity assembly (TO TRY AT A LATER DATE):  
     + You need a configuration file to run Trinity within phyluce. Create a file called ```assembly.conf``` in ```uce-tutorial```.
@@ -196,7 +199,8 @@ We will use Trinity to assemble the data into contigs. There will be a separate 
     ```  
 
 * **JOB FILE #3:** Trinity
-    + **PE:** mthread 2  
+    + **CPU time** short or medium (depending on number of samples)
+    + **PE:** mthread 2
     + **memory:** 6 GB (must have more than 8 GB total for this - here we are specifying 6 X 2 = 12 GB total RAM)
     + **modules:** phyluce_tg
     + **commands:**  ```phyluce_assembly_assemblo_trinity```  
@@ -210,9 +214,11 @@ We will use Trinity to assemble the data into contigs. There will be a separate 
 ###5. Assembly QC
 Let's check to see how well the assemblies worked.
 
+* Make sure your current working directory is ```uce-tutorial```
+
 * **JOB FILE #4:**
     + **PE:** serial  
-    + **memory:** 1 GB  
+    + **memory:** 2 GB  
     + **modules:** phyluce_tg
     + **command:**  
     ```
@@ -221,13 +227,13 @@ Let's check to see how well the assemblies worked.
     done
     ```
    
-* Check the log file for output similar to the below (header not included):  
+* Check the log file for output similar to below (header not included):  
 ```
 samples,contigs,total bp,mean length,95 CI length,min length,max length,median legnth,contigs >1kb   
-alligator_mississippiensis.contigs.fasta,10587,5820479,549.776046094,3.5939422934,224,11285,413.0,1182   
-anolis_carolinensis.contigs.fasta,2458,1067208,434.177379984,5.72662897806,224,4359,319.0,34   
-gallus_gallus.contigs.fasta,19905,8841661,444.192966591,2.06136172068,224,9883,306.0,1530   
-mus_musculus.contigs.fasta,2162,1126231,520.920906568,7.75103292163,224,6542,358.0,186   
+alligator_mississippiensis.contigs.fasta,6220,3615052,581.19807074,4.06558418147,224,11060,574.0,228
+anolis_carolinensis.contigs.fasta,2367,1024996,433.035910435,5.55683628344,224,4363,319.0,32
+gallus_gallus.contigs.fasta,16875,7088986,420.088059259,1.92888733993,224,6321,298.0,612
+mus_musculus.contigs.fasta,1882,996123,529.289585547,8.06646682863,224,6047,370.0,137
 ```
 
 ###6. Finding UCE loci
@@ -250,17 +256,18 @@ Now we want to run ```lastz``` to match contigs to the UCE probe set and to remo
         --output uce-search-results
         ```  
 * The directory ```uce-search-results``` is created with the results.
-* Look at the log file to see how many unique and duplicate matches and how many loci were removed for each taxon.    
+    * *If you need to resubmit this command, delete this directory first or you'll receive an error message in your log file.*
+* Look at the log file to see how many unique and duplicate matches and how many loci were removed for each taxon.
 * Here is an example output:
 
 ```
 alligator_mississippiensis:
-    4315 (40.76%) uniques of 10587 contigs
+    4071 (65.45%) uniques of 6220 contigs
     0 dupe probe matches
-    230 UCE loci removed for matching multiple contigs
-    40 contigs removed for matching multiple UCE loci
+    227 UCE loci removed for matching multiple contigs
+    21 contigs removed for matching multiple UCE loci
 ```  
-* To reduce the likelihood of paralogous loci being included, Phyluce removes any loci where there is more than contig that matches.
+* To reduce the likelihood of paralogous loci being included, Phyluce removes any loci for a sample where there is more than contig that matches.
 
 ###7. Extracting UCE loci
 Now that we have located UCE loci, we need to determine which taxa we want in our analysis, create a list of those taxa, and also a list of which UCE loci we enriched in each taxon (the “data matrix configuration file”). We will then use this list to extract FASTA data for each taxon for each UCE locus.
@@ -450,7 +457,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
     + **command:** ```phyluce_align_get_align_summary_data```  
         + **arguments:**  
         ```
-        --alignments mafft-nexus-internal-trimmed-gblocks \  
+        --alignments mafft-nexus-internal-trimmed-gblocks \
         --cores $NSLOTS \
         --log-path log
         ```
@@ -508,8 +515,8 @@ Here we will formatting our 75p data matrix into a phylip file for RAxML or ExaM
     + **command:** ```phyluce_align_format_nexus_files_for_raxml```  
         + **arguments:**  
         ```
-        --alignments mafft-nexus-internal-trimmed-gblocks-clean-75p \  
-        --output mafft-nexus-internal-trimmed-gblocks-clean-75p-raxml \  
+        --alignments mafft-nexus-internal-trimmed-gblocks-clean-75p \
+        --output mafft-nexus-internal-trimmed-gblocks-clean-75p-raxml \
         --charsets \
         --log-path log
         ```
