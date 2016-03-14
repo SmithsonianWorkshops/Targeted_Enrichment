@@ -63,14 +63,12 @@ This step is not required to process UCEs, but it allows you to count the number
     + **shell:** sh *(use for all job files in the tutorial)*
     + **modules:** none
     + **command:** 
-
     ```
     for i in *R1*.fastq.gz;
     do echo $i;
     gunzip -c $i | wc -l | awk '{print $1/4}';
     done
     ```
-
     + **job name:** countreads *(or name of your choice)*
     + **log file name:** countreads.log
     + **change to cwd:** Checked *(keep checked for all job files)*
@@ -140,6 +138,8 @@ These data are raw, so we need to trim adapters and low quality reads before ass
         --paired \
         --cores $NSLOTS
         ```
+    + **job name:** illumiprocessor *Use the name of the phyluce command as the job name for all the remaining job files*
+
 
 Here is a sample job file:
 ```
@@ -243,6 +243,8 @@ Now we want to run ```lastz``` to match contigs to the UCE probe set and to remo
 
 * Before we locate UCE loci (in other words, match your contigs to the UCE probes), you need to get the probe set used for the enrichments:   
 	+ copy ```uce-5k-probes.fasta``` from ```/pool/genomics/tutorial_data``` to your ```uce-tutorial``` directory 
+
+* Note that in many of the steps that follow there is an ```--output``` argument which is the name of an output file or directory that is created by the command. When you are working on your own analyses with real data consider the naming so that the contents will be well described.
 
 * **JOB FILE #5:** Match contigs to probes:
     + **PE:** mthread 2  
@@ -355,7 +357,7 @@ We can "explode" the monolithic fasta file into a file of UCE loci that we have 
     done
     ```
 
-* Check your log file for output like this (note the values will not be identical to this example and there will not be a header line):
+* Check your log file for output like this (note the values may not be identical to this example and there will not be a header line):
 
 ```
 samples,contigs,total bp,mean length,95 CI length,min length,max length,median legnth,contigs >1kb
@@ -463,6 +465,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
         --cores $NSLOTS \
         --log-path log
         ```
+* **Inspect the summary information that will be in the log file.**
 
 ###10. Alignment cleaning
 Each alignment now contains the locus name along with the taxon name. This is not what we want downstream, so we need to clean our alignments. For the remainder of this tutorial, we will work with the Gblocks trimmed alignments, so we will clean those alignments:
