@@ -216,7 +216,7 @@ Let's check to see how well the assemblies worked.
 
 * Make sure your current working directory is ```uce-tutorial```
 
-* **JOB FILE #4:**
+* **JOB FILE #4:** Get FASTA lengths
     + **PE:** serial  
     + **memory:** 2 GB  
     + **modules:** phyluce_tg
