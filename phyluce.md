@@ -28,7 +28,7 @@ Here, we will process raw Illumina UCE data for 4 taxa that were enriched with t
 ###1. Get the data  
 First we will get the tutorial data.
 
-* log in to Hydra
+* log in to Hydra (If you need assistance with Hydra, check the [support wiki](https://confluence.si.edu/display/HPC/High+Performance+Computing)).
 * change to your directory  
     + hint: `cd /pool/genomics/USERNAME` where *USERNAME* is your Hydra login name
 * create a project directory  
@@ -75,7 +75,7 @@ This step is not required to process UCEs, but it allows you to count the number
     + **log file name:** countreads.log
     + **change to cwd:** Checked *(keep checked for all job files)*
     + **join stderr & stdout** Checked *(Keep checked for all job files)*
-    + hint: upload your job file using ```scp``` from your local machine into the `raw-fastq` directory
+    + hint: upload your job file using ```scp``` from your local machine into the `raw-fastq` directory. See [here](https://confluence.si.edu/display/HPC/Disk+Space+and+Disk+Usage) and [here](https://confluence.si.edu/display/HPC/Transferring+files+to+or+from+Hydra) on the Hydra wiki for more info.
     + hint: submit the job on Hydra using ```qsub```
 
 Here is a sample job file:  
@@ -301,9 +301,11 @@ mus_musculus
         --output taxon-sets/all/all-taxa-incomplete.conf
         ```  
     
-* Check ```taxon-sets/all``` to see if the .conf file is there.  
+* Submit the job and check in ```taxon-sets/all``` to see if the file ```all-taxa-incomplete.conf``` is there.
+
+
 * Now, we need to extract FASTA data that correspond to the loci in ```all-taxa-incomplete.conf```:  
-* Change to the taxon-sets/all directory: ```cd taxon-sets/all```  
+* Change to the ```taxon-sets/all``` directory: if you're not there already ```cd taxon-sets/all```
 * Make a log directory to hold our log files: ```mkdir log```
 
 * **JOB FILE #7:** get FASTA data for taxa in our taxon set
@@ -321,7 +323,7 @@ mus_musculus
         --log-path log
         ```  
     
-* The extracted FASTA data are in a monolithic FASTA file (all data for all organisms) named ```all-taxa-incomplete.fasta``` - find it!
+* The extracted FASTA data this command creates are in a monolithic FASTA file (all data for all organisms) named ```all-taxa-incomplete.fasta``` - **find it!**
 
 ###8. Exploding the monolithic FASTA file
 We can "explode" the monolithic fasta file into a file of UCE loci that we have enriched by taxon in order to get individual statistics on UCE assemblies for a given taxon.  
@@ -339,9 +341,9 @@ We can "explode" the monolithic fasta file into a file of UCE loci that we have 
         --output-dir exploded-fastas \
         --by-taxon
         ```
-* ```phyluce_assembly_explode_get_fastas_file``` created a directory ```uce-tutorial/taxon-sets/all/exploded-fastas```
+* ```phyluce_assembly_explode_get_fastas_file``` created a directory ```exploded-fastas```, take a look at the fasta files.
 
-* Make sure your current working directory is still ```uce-tutorial/taxon-sets/all```
+* Make sure your current working directory is ```uce-tutorial/taxon-sets/all```
 * **JOB FILE #9:** get summary stats on the FASTAs
     + **PE:** serial
     + **memory:** 2 GB
@@ -357,10 +359,10 @@ We can "explode" the monolithic fasta file into a file of UCE loci that we have 
 
 ```
 samples,contigs,total bp,mean length,95 CI length,min length,max length,median legnth,contigs >1kb
-alligator-mississippiensis.unaligned.fasta,4315,3465679,803.170104287,3.80363492428,224,1794,823.0,980
-anolis-carolinensis.unaligned.fasta,703,400214,569.294452347,9.16433421241,224,1061,546.0,7
-gallus-gallus.unaligned.fasta,3923,3273674,834.482283966,4.26048496461,231,1864,852.0,1149
-mus-musculus.unaligned.fasta,825,594352,720.426666667,9.85933217965,225,1178,823.0,139
+alligator-mississippiensis.unaligned.fasta,4071,2695452,662.110537951,3.29387421188,224,2579,674.0,165
+anolis-carolinensis.unaligned.fasta,685,387996,566.417518248,9.17982752242,224,1039,537.0,6
+gallus-gallus.unaligned.fasta,3885,2773870,713.994851995,3.80263831483,224,1594,729.0,443
+mus-musculus.unaligned.fasta,729,516360,708.312757202,10.3885688238,224,1150,809.0,101
 ```
 
 
