@@ -35,7 +35,9 @@ First we will get the tutorial data.
 ```mkdir uce-tutorial```
 * change to that directory  
 ```cd uce-tutorial```
-* If you are running this tutorial after the workshop, see the [end of the document](###Addendum) for instructions in order to download the data using wget. Because there are so many of us working on the login node at once today, we will copy the data from ```/pool/genomics/tutorial_data```
+
+If you are running this tutorial after the workshop, see the end of the document for instructions in order to download the data using wget. Because there are so many of us working on the login node at once today, we will copy the data from ```/pool/genomics/tutorial_data```
+
 * make a directory to hold the raw data  
 ```mkdir raw-fastq```
 * change to the directory we just created  
@@ -54,7 +56,7 @@ This step is not required to process UCEs, but it allows you to count the number
 
 * **JOB FILE #1:** Counting read data (it is best practice to use a job file, even for a trivial task like this).
     + hint: use the QSub Generator: https://hydra-3.si.edu/tools/QSubGen
-    		+ **Remember Chrome works best with this and to accept the security warning message*
+    		+ *Remember Chrome works best with this and to accept the security warning message*
     + **CPU time:** short *(we will be using short for all job files in this tutorial)*
     + **memory:** 2GB
     + **PE:** serial
@@ -118,10 +120,11 @@ Mus_musculus_CTACAACGGC_L001_R1.fastq.gz
 ###3. Clean the read data
 These data are raw, so we need to trim adapters and low quality reads before assembly. There are many tools for this. We have modified phyluce's illumiprocessor to use Trim Galore! instead of Trimmomatic. Trim Galore! has the needed functionality but behaves better on Hydra (i.e. does not use Java). 
 
+* Now change back to the ```uce-tutorial``` directory with the ```cd ..``` command.
+
 * You will first need to copy a configuration file called `illumiprocessor.conf` from `/pool/genomics/tutorial_data` to your `uce-tutorial` directory.
 	+ hint: use ```cp```.
 	+ Make sure you've changed to the ```uce-tutorial``` directory from ```raw-fastq``` with the command ```cd ..``` before copying the file.
-
 
 * **JOB FILE #2:** illumiprocessor  
     + hint: your raw reads are in ```raw-fastq``` but you want to run illumiprocessor from ```uce-tutorial```
@@ -129,15 +132,46 @@ These data are raw, so we need to trim adapters and low quality reads before ass
     + **memory:** 2 GB
     + **modules:** phyluce_tg
     + **command:** `illumiprocessor`
-    	+ **arguments:**  
+    	+ **arguments:**  (Note: the arguments should start on the same line as the command. The '\' in the arguments allows them to span multiple lines.)
         ```
-        --input raw-fastq \  
+        --input raw-fastq \
         --output clean-fastq \
         --config illumiprocessor.conf \
         --paired \
         --cores $NSLOTS
         ```
-    
+
+Here is a sample job file:
+```
+	# /bin/sh
+	# ----------------Parameters---------------------- #
+	#$ -S /bin/sh
+	#$ -pe mthread 2
+	#$ -q sThC.q
+	#$ -l mres=2G,h_data=2G,h_vmem=2G
+	#$ -cwd
+	#$ -j y
+	#$ -N illumiprocessor
+	#$ -o illumiprocessor.log
+	#
+	# ----------------Modules------------------------- #
+	module load bioinformatics/phyluce/1.5_tg
+	#
+	# ----------------Your Commands------------------- #
+	#
+	echo + `date` job $JOB_NAME started in $QUEUE with jobID=$JOB_ID on $HOSTNAME
+	echo + NSLOTS = $NSLOTS
+	#
+	illumiprocessor --input raw-fastq \  
+	--output clean-fastq \
+	--config illumiprocessor.conf \
+	--paired \
+	--cores $NSLOTS
+	#
+	echo = `date` job $JOB_NAME done
+```
+
+
 * Check the log file and ```clean-fastq``` for results. Your cleaned files will be in ```clean-fastq/split-adapter-quality-trimmed```
 
 ###4. Assemble the data
