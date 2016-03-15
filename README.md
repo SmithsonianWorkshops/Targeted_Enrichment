@@ -5,3 +5,6 @@ This repository contains the instructions and materials for the Smithsonian Targ
 If you are attending the Spring 2016 course, please fill out this pre-course and post-course survey:
 * Pre-course: http://goo.gl/forms/ddmuaTJ3GS
 * Post-course: http://goo.gl/forms/MlW4nh0JHW
+
+##Twitter
+Follow on Twitter: [#SI_BAITS](https://twitter.com/hashtag/SI_BAITS)
