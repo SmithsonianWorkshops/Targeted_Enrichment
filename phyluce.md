@@ -479,6 +479,7 @@ Each alignment now contains the locus name along with the taxon name. This is no
     + **command:** ```phyluce_align_remove_locus_name_from_nexus_lines```  
         + **arguments:**  
         ```
+        --alignments mafft-nexus-internal-trimmed-gblocks \
         --output mafft-nexus-internal-trimmed-gblocks-clean \
         --cores $NSLOTS \
         --log-path log
