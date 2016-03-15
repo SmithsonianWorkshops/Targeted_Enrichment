@@ -130,7 +130,7 @@ These data are raw, so we need to trim adapters and low quality reads before ass
     + hint: your raw reads are in ```raw-fastq``` but you want to run illumiprocessor from ```uce-tutorial```
     + **PE:** multi-thread 2 
     + **memory:** 2 GB
-    + **modules:** phyluce_tg
+    + **modules:** bioinformatics/phyluce/1.5_tg
     + **command:** `illumiprocessor`
     	+ **arguments:**  (Note: the arguments should start on the same line as the command. The '\' in the arguments allows them to span multiple lines.)
         ```
@@ -204,7 +204,7 @@ We will use Trinity to assemble the data into contigs. There will be a separate 
     + **CPU time** short or medium (depending on number of samples)
     + **PE:** mthread 2
     + **memory:** 6 GB (must have more than 8 GB total for this - here we are specifying 6 X 2 = 12 GB total RAM)
-    + **modules:** phyluce_tg
+    + **modules:** bioinformatics/phyluce/1.5_tg
     + **commands:**  ```phyluce_assembly_assemblo_trinity```  
         + **arguments:**  
         ```
@@ -221,7 +221,7 @@ Let's check to see how well the assemblies worked.
 * **JOB FILE #4:** Get FASTA lengths
     + **PE:** serial  
     + **memory:** 2 GB  
-    + **modules:** phyluce_tg
+    + **modules:** bioinformatics/phyluce/1.5_tg
     + **command:**  
     ```
     for i in trinity-assemblies/contigs/*.fasta;
@@ -249,7 +249,7 @@ Now we want to run ```lastz``` to match contigs to the UCE probe set and to remo
 * **JOB FILE #5:** Match contigs to probes:
     + **PE:** mthread 2  
     + **memory:** 2 GB  
-    + **modules:** phyluce_tg
+    + **modules:** bioinformatics/phyluce/1.5_tg
     + **command:** ```phyluce_assembly_match_contigs_to_probes```
         + **arguments:** 
         ```
@@ -292,7 +292,7 @@ mus_musculus
 * **JOB FILE #6:** Get match counts:
     + **PE:** serial
     + **memory:** 2 GB
-    + **modules:** phyluce_tg
+    + **modules:** bioinformatics/phyluce/1.5_tg
     + **command:** ```phyluce_assembly_get_match_counts```
         + **arguments:** 
         ```
@@ -313,7 +313,7 @@ mus_musculus
 * **JOB FILE #7:** get FASTA data for taxa in our taxon set
     + **PE:** serial
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_assembly_get_fastas_from_match_counts```  
         + **arguments:**   
         ```
@@ -335,7 +335,7 @@ We can "explode" the monolithic fasta file into a file of UCE loci that we have 
 * **JOB FILE #8:** explode the monolithic FASTA file
     + **PE:** serial
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_assembly_explode_get_fastas_file```  
         + **arguments:**  
         ```
@@ -349,7 +349,7 @@ We can "explode" the monolithic fasta file into a file of UCE loci that we have 
 * **JOB FILE #9:** get summary stats on the FASTAs
     + **PE:** serial
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** 
     ```
     for i in exploded-fastas/*.fasta;
@@ -377,7 +377,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
 * **JOB FILE #10:** align with edge-trimming
     + **PE:** mthread 4
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_seqcap_align```  
         + **arguments:**  
         ```
@@ -399,7 +399,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
 * **JOB FILE #11:** get alignment summary data
     + **PE:** serial
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_get_align_summary_data```  
         + **arguments:**  
         ```
@@ -416,7 +416,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
 * **JOB FILE #12:** align with no-trim and output FASTA
     + **PE:** multi-thread 4
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_seqcap_align```  
        + **arguments:**
        ```
@@ -438,7 +438,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
 * **JOB FILE #13:** internal trim with Gblocks
     + **PE:** multi-thread 2
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_get_gblocks_trimmed_alignments_from_untrimmed```  
         + **arguments:**  
         ```
@@ -457,7 +457,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
 * **JOB FILE #14:** get alignment summary data
     + **PE:** serial
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_get_align_summary_data```  
         + **arguments:**  
         ```
@@ -475,7 +475,7 @@ Each alignment now contains the locus name along with the taxon name. This is no
 * **JOB FILE #15:** clean alignments
     + **PE:** multi-thread 2
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_remove_locus_name_from_nexus_lines```  
         + **arguments:**  
         ```
@@ -494,7 +494,7 @@ To create a 75% data matrix (i.e. 25% or less missing), run the following. Notic
 * **JOB FILE #16:** create a 75% data matrix
     + **PE:** multi-thread 2
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_get_only_loci_with_min_taxa```  
         + **arguments:**  
         ```
@@ -516,7 +516,7 @@ Here we will formatting our 75p data matrix into a phylip file for RAxML or ExaM
 * **JOB FILE #17:** generate a phylip file
     + **PE:** serial
     + **memory:** 2 GB
-    + **modules:** phyluce_tg  
+    + **modules:** bioinformatics/phyluce/1.5_tg  
     + **command:** ```phyluce_align_format_nexus_files_for_raxml```  
         + **arguments:**  
         ```
