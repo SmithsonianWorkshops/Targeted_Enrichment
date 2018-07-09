@@ -36,13 +36,13 @@ First we will get the tutorial data.
 * change to that directory  
 ```cd uce-tutorial```
 
-If you are running this tutorial after the workshop, see the end of the document for instructions in order to download the data using wget. Because there are so many of us working on the login node at once today, we will copy the data from ```/pool/genomics/tutorial_data```
+If you are running this tutorial after the workshop, see the end of the document for instructions in order to download the data using wget. Because there are so many of us working on the login node at once today, we will copy the data from ```/data/genomics/tutorial_data```
 
 * make a directory to hold the raw data  
 ```mkdir raw-fastq```
 * change to the directory we just created  
 ```cd raw-fastq```
-* copy the data to your working directory using ```cp```. The data are here: ```/pool/genomics/tutorial_data/fastq.zip```  
+* copy the data to your working directory using ```cp```. The data are here: ```/data/genomics/tutorial_data/fastq.zip```  
 * unzip the fastq data  
 ```unzip fastq.zip```
 * delete the zip file  
@@ -120,7 +120,7 @@ These data are raw, so we need to trim adapters and low quality reads before ass
 
 * Now change back to the ```uce-tutorial``` directory with the ```cd ..``` command.
 
-* You will first need to copy a configuration file called `illumiprocessor.conf` from `/pool/genomics/tutorial_data` to your `uce-tutorial` directory.
+* You will first need to copy a configuration file called `illumiprocessor.conf` from `/data/genomics/tutorial_data` to your `uce-tutorial` directory.
 	+ hint: use ```cp```.
 	+ Make sure you've changed to the ```uce-tutorial``` directory from ```raw-fastq``` with the command ```cd ..``` before copying the file.
 
@@ -182,7 +182,7 @@ Here is a sample job file:
 ### 4. Assemble the data
 We will use Trinity to assemble the data into contigs. There will be a separate Trinity run for each sample in your dataset. This is the most time consuming computer intensive portion of the pipeline. For today's tutorial, we will not have time to complete the assemblies.  
 
-* Copy the directory with completed assemblies: ```/pool/genomics/tutorial_data/trinity-assemblies``` to your ```uce-tutorial``` directory.  
+* Copy the directory with completed assemblies: ```/data/genomics/tutorial_data/trinity-assemblies``` to your ```uce-tutorial``` directory.  
 * hint: use ```cp -r```.  
 * Find the contigs!
 * **Skip to the next section (#5).** If you have extra time now, feel free to make the Trinity job file but wait to submit it until later.
@@ -244,7 +244,7 @@ Now we want to run ```lastz``` to match contigs to the UCE probe set and to remo
 * sqlite is a database system that phyluce uses to store information about the contigs such as presence/absence. Phyluce scripts access this data and advanced users can access this database directly.
 
 * Before we locate UCE loci (in other words, match your contigs to the UCE probes), you need to get the probe set used for the enrichments:   
-	+ copy ```uce-5k-probes.fasta``` from ```/pool/genomics/tutorial_data``` to your ```uce-tutorial``` directory 
+	+ copy ```uce-5k-probes.fasta``` from ```/data/genomics/tutorial_data``` to your ```uce-tutorial``` directory 
 
 * **JOB FILE #5:** Match contigs to probes:
     + **PE:** mthread 2  
