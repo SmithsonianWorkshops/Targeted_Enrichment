@@ -25,7 +25,7 @@ Here, we will process raw Illumina UCE data for 4 taxa that were enriched with t
 4. *Gallus gallus* (PE250)
 
 
-###1. Get the data  
+### 1. Get the data  
 First we will get the tutorial data.
 
 * log in to Hydra (If you need assistance with Hydra, check the [support wiki](https://confluence.si.edu/display/HPC/High+Performance+Computing)).
@@ -48,9 +48,9 @@ If you are running this tutorial after the workshop, see the end of the document
 * delete the zip file  
 ```rm fastq.zip```
 
-#####How many files do you see in ```raw-fastq```?
+##### How many files do you see in ```raw-fastq```?
 
-###2. Count the read data
+### 2. Count the read data
 
 This step is not required to process UCEs, but it allows you to count the number of reads for each taxon. Here we are using Unix tools echo, gunzip, wc (word count), awk and we will need our first job file.
 
@@ -115,7 +115,7 @@ Mus_musculus_CTACAACGGC_L001_R1.fastq.gz
 1298196
 ```
 
-###3. Clean the read data
+### 3. Clean the read data
 These data are raw, so we need to trim adapters and low quality reads before assembly. There are many tools for this. We have modified phyluce's illumiprocessor to use Trim Galore! instead of Trimmomatic. Trim Galore! has the needed functionality but behaves better on Hydra (i.e. does not use Java). 
 
 * Now change back to the ```uce-tutorial``` directory with the ```cd ..``` command.
@@ -179,7 +179,7 @@ Here is a sample job file:
     * Remove the offending directory and re-submit with `qsub`.
 
 
-###4. Assemble the data
+### 4. Assemble the data
 We will use Trinity to assemble the data into contigs. There will be a separate Trinity run for each sample in your dataset. This is the most time consuming computer intensive portion of the pipeline. For today's tutorial, we will not have time to complete the assemblies.  
 
 * Copy the directory with completed assemblies: ```/pool/genomics/tutorial_data/trinity-assemblies``` to your ```uce-tutorial``` directory.  
@@ -213,7 +213,7 @@ We will use Trinity to assemble the data into contigs. There will be a separate 
         --cores $NSLOTS
         ```
 
-###5. Assembly QC
+### 5. Assembly QC
 Let's check to see how well the assemblies worked.
 
 * Make sure your current working directory is ```uce-tutorial```
@@ -238,7 +238,7 @@ gallus_gallus.contigs.fasta,16875,7088986,420.088059259,1.92888733993,224,6321,2
 mus_musculus.contigs.fasta,1882,996123,529.289585547,8.06646682863,224,6047,370.0,137
 ```
 
-###6. Finding UCE loci
+### 6. Finding UCE loci
 Now we want to run ```lastz``` to match contigs to the UCE probe set and to remove duplicates.The search matches are stored in a sqlite database.
 
 * sqlite is a database system that phyluce uses to store information about the contigs such as presence/absence. Phyluce scripts access this data and advanced users can access this database directly.
@@ -271,7 +271,7 @@ alligator_mississippiensis:
 ```  
 * To reduce the likelihood of paralogous loci being included, Phyluce removes any loci for a sample where there is more than contig that matches.
 
-###7. Extracting UCE loci
+### 7. Extracting UCE loci
 Now that we have located UCE loci, we need to determine which taxa we want in our analysis, create a list of those taxa, and also a list of which UCE loci we enriched in each taxon (the “data matrix configuration file”). We will then use this list to extract FASTA data for each taxon for each UCE locus.
 
 * First, we need to decide which taxa we want in our “taxon set." Create a configuration file.
@@ -327,7 +327,7 @@ mus_musculus
     
 * The extracted FASTA data this command creates are in a monolithic FASTA file (all data for all organisms) named ```all-taxa-incomplete.fasta``` - **find it!**
 
-###8. Exploding the monolithic FASTA file
+### 8. Exploding the monolithic FASTA file
 We can "explode" the monolithic fasta file into a file of UCE loci that we have enriched by taxon in order to get individual statistics on UCE assemblies for a given taxon.  
 
 * Make sure your current working directory is ```uce-tutorial/taxon-sets/all```
@@ -368,7 +368,7 @@ mus-musculus.unaligned.fasta,729,516360,708.312757202,10.3885688238,224,1150,809
 ```
 
 
-###9. Aligning UCE loci
+### 9. Aligning UCE loci
 
 When you align UCE loci, you can either leave them as-is, without trimming, edge trim, or internal trim. See the PHYLUCE docs for more details about why you might choose one over the other. By default, edge-trimming is turned on. We will use MAFFT.
 
@@ -467,7 +467,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
         ```
 * **Inspect the summary information that will be in the log file.**
 
-###10. Alignment cleaning
+### 10. Alignment cleaning
 Each alignment now contains the locus name along with the taxon name. This is not what we want downstream, so we need to clean our alignments. For the remainder of this tutorial, we will work with the Gblocks trimmed alignments, so we will clean those alignments:
 
 * Make sure we are in the correct directory: ```uce-tutorial/taxon-sets/all```
@@ -487,7 +487,7 @@ Each alignment now contains the locus name along with the taxon name. This is no
   
 * Now, if you look at the alignments, you will see that the locus names are removed. We’re ready to generate our final data matrices.
 
-###11. Final data matrices
+### 11. Final data matrices
 To create a 75% data matrix (i.e. 25% or less missing), run the following. Notice that the integer following –taxa is the total number of organisms in the study.
 
 * Make sure we are in the correct directory: ```uce-tutorial/taxon-sets/all```
@@ -509,7 +509,7 @@ To create a 75% data matrix (i.e. 25% or less missing), run the following. Notic
 
 * Output alignments are put in ```uce-tutorial/taxon-sets/all/mafft-nexus-internal-trimmed-gblocks-clean-75p```
 
-###12. Preparing data for RAxML and ExaML
+### 12. Preparing data for RAxML and ExaML
 Here we will formatting our 75p data matrix into a phylip file for RAxML or ExaML. 
 
 * Make sure you are in the correct directory: ```uce-tutorial/taxon-sets/all```  
@@ -530,7 +530,7 @@ Here we will formatting our 75p data matrix into a phylip file for RAxML or ExaM
 * The directory ```mafft-nexus-internal-trimmed-gblocks-clean-75p-raxml``` now contains the alignment in phylip format ready for RAxML or ExaML.
 
 
-###Addendum
+### Addendum
 *Downloading tutorial data from figshare*
 If you are working on this tutorial and don't have access to pre-downloaded raw fastq files on Hydra, you can download them from figshare with this command:
 
