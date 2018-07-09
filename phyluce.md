@@ -55,7 +55,7 @@ If you are running this tutorial after the workshop, see the end of the document
 This step is not required to process UCEs, but it allows you to count the number of reads for each taxon. Here we are using Unix tools echo, gunzip, wc (word count), awk and we will need our first job file.
 
 * **JOB FILE #1:** Counting read data (it is best practice to use a job file, even for a trivial task like this).
-    + hint: use the QSub Generator: https://hydra-3.si.edu/tools/QSubGen
+    + hint: use the QSub Generator: https://hydra-4.si.edu/tools/QSubGen
     		+ *Remember Chrome works best with this and to accept the security warning message*
     + **CPU time:** short *(we will be using short for all job files in this tutorial)*
     + **memory:** 2GB
