@@ -1,7 +1,7 @@
 Running phyluce on Hydra
 ---
 
-Tutorial modified from Brant Faircloth's http://phyluce.readthedocs.org/en/latest/tutorial-one.html. It has been tailored to the Smithsonian HPC cluster, Hydra, by the SIBG bioinformatics group.
+Tutorial modified from Brant Faircloth's https://phyluce.readthedocs.io/en/latest/tutorials/tutorial-1.html. It has been tailored to the Smithsonian HPC cluster, Hydra, by the SIBG bioinformatics group.
 
 You will generate 17 job files for Hydra during this tutorial that encompass these major steps:  
 1. Get the data  
@@ -62,7 +62,7 @@ This step is not required to process UCEs, but it allows you to count the number
     + **PE:** serial
     + **shell:** sh *(use for all job files in the tutorial)*
     + **modules:** none
-    + **command:** 
+    + **command:**
     ```
     for i in *R1*.fastq.gz;
     do echo $i;
@@ -107,7 +107,7 @@ Here's what should be in the log file after your job completes:
 ```
 Alligator_mississippiensis_GGAGCTATGG_L001_R1.fastq.gz
 1750000
-Anolis_carolinensis_GGCGAAGGTT_L001_R1.fastq.gz 
+Anolis_carolinensis_GGCGAAGGTT_L001_R1.fastq.gz
 1874362
 Gallus_gallus_TTCTCCTTCA_L001_R1.fastq.gz
 376559
@@ -116,7 +116,7 @@ Mus_musculus_CTACAACGGC_L001_R1.fastq.gz
 ```
 
 ### 3. Clean the read data
-These data are raw, so we need to trim adapters and low quality reads before assembly. There are many tools for this. We have modified phyluce's illumiprocessor to use Trim Galore! instead of Trimmomatic. Trim Galore! has the needed functionality but behaves better on Hydra (i.e. does not use Java). 
+These data are raw, so we need to trim adapters and low quality reads before assembly. There are many tools for this. We have modified phyluce's illumiprocessor to use Trim Galore! instead of Trimmomatic. Trim Galore! has the needed functionality but behaves better on Hydra (i.e. does not use Java).
 
 * Now change back to the ```uce-tutorial``` directory with the ```cd ..``` command.
 
@@ -128,7 +128,7 @@ These data are raw, so we need to trim adapters and low quality reads before ass
 
 * **JOB FILE #2:** illumiprocessor  
     + hint: your raw reads are in ```raw-fastq``` but you want to run illumiprocessor from ```uce-tutorial```
-    + **PE:** multi-thread 2 
+    + **PE:** multi-thread 2
     + **memory:** 2 GB
     + **modules:** bioinformatics/phyluce/1.5_tg
     + **command:** `illumiprocessor`
@@ -174,7 +174,7 @@ Here is a sample job file:
 ```
 
 * Submit and check the log file and ```clean-fastq``` for results. Your cleaned files will be in ```clean-fastq/split-adapter-quality-trimmed```
-* *Note: this job will take about 10 minutes to run. You can use this time to read ahead and check the ```clean-fastq``` directory,* 
+* *Note: this job will take about 10 minutes to run. You can use this time to read ahead and check the ```clean-fastq``` directory,*
 * **Troubleshooting:** With some Phyluce steps if you need to restart a command you will get an error that the output directory already exists. You will see a line like this in your log file: ```[WARNING] Output directory exists, REMOVE [Y/n]? Traceback (most recent call last):...```
     * Remove the offending directory and re-submit with `qsub`.
 
@@ -193,7 +193,7 @@ We will use Trinity to assemble the data into contigs. There will be a separate 
     + The file has one line for each sample starting with the sample ID and then the full path to the directory containing the cleaned reads.
     + contents of the new assembly.conf file (hint: you will need to change YOUR-PATH to your directory):  
     ```
-    [samples] 
+    [samples]
     alligator_mississippiensis:/YOUR-PATH/clean-fastq/alligator_mississippiensis/split-adapter-quality-trimmed/
     anolis_carolinensis:/YOUR-PATH/clean-fastq/anolis_carolinensis/split-adapter-quality-trimmed/
     gallus_gallus:/YOUR-PATH/clean-fastq/gallus_gallus/split-adapter-quality-trimmed/
@@ -228,7 +228,7 @@ Let's check to see how well the assemblies worked.
     do phyluce_assembly_get_fasta_lengths --input $i --csv;
     done
     ```
-   
+
 * Check the log file for output similar to below (header not included):  
 ```
 samples,contigs,total bp,mean length,95 CI length,min length,max length,median legnth,contigs >1kb   
@@ -244,14 +244,14 @@ Now we want to run ```lastz``` to match contigs to the UCE probe set and to remo
 * sqlite is a database system that phyluce uses to store information about the contigs such as presence/absence. Phyluce scripts access this data and advanced users can access this database directly.
 
 * Before we locate UCE loci (in other words, match your contigs to the UCE probes), you need to get the probe set used for the enrichments:   
-	+ copy ```uce-5k-probes.fasta``` from ```/data/genomics/tutorial_data``` to your ```uce-tutorial``` directory 
+	+ copy ```uce-5k-probes.fasta``` from ```/data/genomics/tutorial_data``` to your ```uce-tutorial``` directory
 
 * **JOB FILE #5:** Match contigs to probes:
     + **PE:** mthread 2  
     + **memory:** 2 GB  
     + **modules:** bioinformatics/phyluce/1.5_tg
     + **command:** ```phyluce_assembly_match_contigs_to_probes```
-        + **arguments:** 
+        + **arguments:**
         ```
         --contigs trinity-assemblies/contigs \
         --probes uce-5k-probes.fasta \
@@ -275,15 +275,15 @@ alligator_mississippiensis:
 Now that we have located UCE loci, we need to determine which taxa we want in our analysis, create a list of those taxa, and also a list of which UCE loci we enriched in each taxon (the “data matrix configuration file”). We will then use this list to extract FASTA data for each taxon for each UCE locus.
 
 * First, we need to decide which taxa we want in our “taxon set." Create a configuration file.
-    + hint: use ```nano``` to create a file called ```taxon-set.conf``` in ```uce-tutorial``` listing the taxa you want to include like so: 
-    
+    + hint: use ```nano``` to create a file called ```taxon-set.conf``` in ```uce-tutorial``` listing the taxa you want to include like so:
+
 ```
 [all]
 alligator_mississippiensis
 anolis_carolinensis
 gallus_gallus
 mus_musculus
-``` 
+```
 
 * Now that we have this file created, we do the following to create the initial list of loci for each taxon:
     + Make sure you current directory is ```uce-tutorial```
@@ -294,7 +294,7 @@ mus_musculus
     + **memory:** 2 GB
     + **modules:** bioinformatics/phyluce/1.5_tg
     + **command:** ```phyluce_assembly_get_match_counts```
-        + **arguments:** 
+        + **arguments:**
         ```
         --locus-db uce-search-results/probe.matches.sqlite \
         --taxon-list-config taxon-set.conf \
@@ -302,7 +302,7 @@ mus_musculus
         --incomplete-matrix \
         --output taxon-sets/all/all-taxa-incomplete.conf
         ```  
-    
+
 * Submit the job and check in ```taxon-sets/all``` to see if the file ```all-taxa-incomplete.conf``` is there.
 
 
@@ -324,7 +324,7 @@ mus_musculus
         --incomplete-matrix all-taxa-incomplete.incomplete \
         --log-path log
         ```  
-    
+
 * The extracted FASTA data this command creates are in a monolithic FASTA file (all data for all organisms) named ```all-taxa-incomplete.fasta``` - **find it!**
 
 ### 8. Exploding the monolithic FASTA file
@@ -350,7 +350,7 @@ We can "explode" the monolithic fasta file into a file of UCE loci that we have 
     + **PE:** serial
     + **memory:** 2 GB
     + **modules:** bioinformatics/phyluce/1.5_tg  
-    + **command:** 
+    + **command:**
     ```
     for i in exploded-fastas/*.fasta;
     do phyluce_assembly_get_fasta_lengths --input $i --csv;
@@ -389,7 +389,7 @@ When you align UCE loci, you can either leave them as-is, without trimming, edge
         --incomplete-matrix \
         --log-path log
         ```  
- 
+
 * When you look at the log, the ```.``` values that you see represent loci that were aligned and successfully trimmed. Any ```X``` values that you see represent loci that were removed because trimming reduced their length to effectively nothing.
 
 * output alignments are in ```uce-tutorial/taxon-sets/all/mafft-nexus-edge-trimmed```
@@ -484,7 +484,7 @@ Each alignment now contains the locus name along with the taxon name. This is no
         --cores $NSLOTS \
         --log-path log
         ```   
-  
+
 * Now, if you look at the alignments, you will see that the locus names are removed. We’re ready to generate our final data matrices.
 
 ### 11. Final data matrices
@@ -510,7 +510,7 @@ To create a 75% data matrix (i.e. 25% or less missing), run the following. Notic
 * Output alignments are put in ```uce-tutorial/taxon-sets/all/mafft-nexus-internal-trimmed-gblocks-clean-75p```
 
 ### 12. Preparing data for RAxML and ExaML
-Here we will formatting our 75p data matrix into a phylip file for RAxML or ExaML. 
+Here we will formatting our 75p data matrix into a phylip file for RAxML or ExaML.
 
 * Make sure you are in the correct directory: ```uce-tutorial/taxon-sets/all```  
 
