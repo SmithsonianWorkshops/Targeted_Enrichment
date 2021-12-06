@@ -169,7 +169,7 @@ Here is a sample job file:
 	echo + `date` job $JOB_NAME started in $QUEUE with jobID=$JOB_ID on $HOSTNAME
 	echo + NSLOTS = $NSLOTS
 	#
-  cd ..
+	cd ..
 	illumiprocessor \
 	--input raw-fastq \
 	--output clean-fastq \
@@ -215,13 +215,13 @@ Note: Prior to Phyluce 1.7 Trinity was supported as an assembler. This is no lon
     + You need a configuration file to run Spades within phyluce. Create a file called ```assembly.conf``` in ```uce-tutorial```.
     + hint: change directory to ```uce-tutorial``` and use ```nano``` to create the file  
     + The file has one line for each sample starting with the sample ID and then the full path to the directory containing the cleaned reads.
-    + contents of the new assembly.conf file (hint: you will need to change YOUR-PATH to your directory):  
+    + contents of the new assembly.conf file (hint: you will need to change `USERNAME` to your Hydra user name):  
     ```
     [samples]
-    alligator_mississippiensis:/YOUR-PATH/clean-fastq/alligator_mississippiensis/split-adapter-quality-trimmed/
-    anolis_carolinensis:/YOUR-PATH/clean-fastq/anolis_carolinensis/split-adapter-quality-trimmed/
-    gallus_gallus:/YOUR-PATH/clean-fastq/gallus_gallus/split-adapter-quality-trimmed/
-    mus_musculus:/YOUR-PATH/clean-fastq/mus_musculus/split-adapter-quality-trimmed/
+    alligator_mississippiensis:/pool/genomics/USERNAME/uce-tutorial/clean-fastq/alligator_mississippiensis/split-adapter-quality-trimmed/
+    anolis_carolinensis:/pool/genomics/USERNAME/uce-tutorial/clean-fastq/anolis_carolinensis/split-adapter-quality-trimmed/
+    gallus_gallus:/pool/genomics/USERNAME/uce-tutorial/clean-fastq/gallus_gallus/split-adapter-quality-trimmed/
+    mus_musculus:/pool/genomics/USERNAME/uce-tutorial/clean-fastq/mus_musculus/split-adapter-quality-trimmed/
     ```  
 
 * **JOB FILE #3:** Spades
@@ -229,14 +229,49 @@ Note: Prior to Phyluce 1.7 Trinity was supported as an assembler. This is no lon
     + **PE:** mthread 12
     + **memory:** 6 GB (must have more than 40 GB total for this - here we are specifying 12 X 6 = 72 GB total RAM)
     + **modules:** bioinformatics/phyluce/1.7.1
-    + **commands:**  ```phyluce_assembly_assemblo_spades```  
+    + **commands:**  ``````  
         + **arguments:**  
         ```
-        --conf assembly.conf \
-        --output spades-assemblies \
-        --cores $NSLOTS \
-        --memory 72GB
+        cd ..
+        phyluce_assembly_assemblo_spades \
+          --conf assembly.conf \
+          --output spades-assemblies \
+          --cores $NSLOTS \
+          --memory 72
         ```
+TODO: add note about `72`
+TODO: add note about manually specifying to phyluce 1.7.1
+
+Here is a sample job file:
+```
+  # /bin/sh
+  # ----------------Parameters---------------------- #
+  #$ -S /bin/sh
+  #$ -pe mthread 12
+  #$ -q sThC.q
+  #$ -l mres=72G,h_data=6G,h_vmem=6G
+  #$ -cwd
+  #$ -j y
+  #$ -N phyluce_assembly_assemblo_spades
+  #$ -o ../log_files/phyluce_assembly_assemblo_spades.log
+  #
+  # ----------------Modules------------------------- #
+  module load bioinformatics/phyluce/1.7.0
+  #
+  # ----------------Your Commands------------------- #
+  #
+  echo + `date` job $JOB_NAME started in $QUEUE with jobID=$JOB_ID on $HOSTNAME
+  echo + NSLOTS = $NSLOTS
+  #
+  cd ..
+  phyluce_assembly_assemblo_spades \
+    --conf assembly.conf \
+    --output spades-assemblies \
+    --cores $NSLOTS \
+    --memory 72
+  #
+  echo = `date` job $JOB_NAME done
+```
 
 ### 5. Assembly QC
 Let's check to see how well the assemblies worked.
